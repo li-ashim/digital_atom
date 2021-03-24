@@ -1,0 +1,132 @@
+{% extends "rosatom_app/base.html" %}
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-sm-12 col-lg-4 mb-4">
+        <h3>Ученик</h3> 
+        <div class="card" style="width: 18rem;">
+            {% load static %}
+            <img src="{% static 'images/user_placeholder.png' %}" class="img-fluid rounded alt="Mentor's photo">
+            <div class="card-body">
+                <h5 class="card-title">{{ novice.fullname }}</h6>
+                <h6 class="card-subtitle mb-2 text-muted">{{ novice.department }}: {{ novice.position}}</h5>
+                <a href="#" class="btn md text-center">{{ novice.phone_number }}</a>
+                <a href="mailto:{{ mentor.email }}" class="bth md text-center">{{ novice.email }}</a>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-sm-12 col-lg-8">
+        <h3 class="mb-3">Текущие задачи ученика <span class="badge badge-info">{{ number_of_tasks }}</span></h3>
+        <div class="row">
+            <div class="col-5 font-weight-bold">Задание</div>
+            <div class="col-5 font-weight-bold text-left">Дедлайн</div>
+            <div class="col-2 font-weight-bold text-left"></div>
+        </div>
+        {% for task, deadline in tasks %}
+            <div class="row border-bottom p-2 mb-6">
+                <div class="col-5 text-left dropdown show">
+                        <a class="text-primary text-wrap dropdown-toggle" href="#" role="button"
+                                id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="true">
+                            {{ task.task_name }}
+                        </a>
+                        
+                        <div class="dropdown-menu p-2" aria-labelledby="dropdownMenuLink">    
+                            {{ task.content }}
+                        </div>
+                </div>
+                <div class="col-5 text-left">{{ task.deadline }}</div>
+                <div class="col-2 text-left">
+                    
+                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#t{{ task.pk }}">
+                        &#9881;
+                    </button>
+                    
+                    <div class="modal fade" id="t{{ task.pk }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">{{ task.task_name }}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{% url 'rosatom_app:edit_task' %}" method="post" role="form">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label for="t{{task.pk}}_n">Задание</label>
+                                            <input class="form-control" id="t{{task.pk}}_n" type="text" name="task_name" value="{{task.task_name}}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="t{{task.pk}}_c">Содержание</label>
+                                            <textarea class="form-control" id="t{{task.pk}}_c" name="content">{{ task.content }}</textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="t{{task.pk}}_d">Дедлайн</label>
+                                            <input id="t{{task.pk}}_d" class="form-control" name="deadline" type="datetime-local" 
+                                            value="{{ deadline }}"
+                                            min="2021-03-01T08:30">
+                                        </div>
+                                        <input type="hidden" name="task_id" value="{{task.pk}}">
+                                        
+                                        {% buttons submit='Изменить' %}{% endbuttons %}
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12 text-center">
+                <p>У ученика нет активных заданий!</p>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="col-md-4"></div>
+    <div class="col-sm-12 col-lg-8 justify-content-center mb-4">
+        <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#t_new">
+                Добавить задание
+        </button>
+            
+        <div class="modal fade" id="t_new" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Новое задание</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{% url 'rosatom_app:add_task' %}" method="post" role="form">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="t{{task.pk}}_n">Задание</label>
+                                <input class="form-control" id="t{{task.pk}}_n" type="text" name="task_name" value="{{task.task_name}}">
+                            </div>
+                            <div class="form-group">
+                                <label for="t{{task.pk}}_c">Содержание</label>
+                                <textarea class="form-control" id="t{{task.pk}}_c" name="content">{{ task.content }}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="t{{task.pk}}_d">Дедлайн</label>
+                                <input id="t{{task.pk}}_d" class="form-control" name="deadline" type="datetime-local" 
+                                        value="{{ deadline }}"
+                                        min="2021-03-01T08:30">
+                            </div>
+                            <input type="hidden" name="task_id" value="{{task.pk}}">
+
+                            {% buttons submit='Добавить' %}{% endbuttons %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock content %}

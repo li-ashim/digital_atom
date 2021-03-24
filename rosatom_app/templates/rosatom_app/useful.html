@@ -1,0 +1,49 @@
+{% extends "rosatom_app/base.html" %}
+{% load bootstrap4 %}
+{% block content %}
+    <h2>Полезные материалы!</h2>
+    <div class="row justify-content-center">
+        {% for item in useful_materials %}
+            <div class="card m-3 col-11 col-md-5 col-lg-3">
+                {% load static %}
+                <img src="{% static 'images/useful_placeholder.png' %}" class="img-fluid rounded alt="Material photo">
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.title }}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ item.author }}</h5>
+                    <p class="card-body">{{ item.description }}</p>
+                    <div class="card-footer">
+                        <p class="card-text"><small class="text-muted">Добавлено {{ item.date_added }}</small></p>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <h3>Полезные материалы еще не добавлены.</h3>
+        {% endfor %}
+    </div>
+    {% if can_edit %}
+        <div class="row justify-content-center">
+            <button type="button" class="btn btn-primary btn-lg pl-4 pr-4 mb-4" data-toggle="modal" data-target="#t{{ task.pk }}">
+                Добавить
+            </button>
+            <div class="modal fade" id="t{{ item.pk }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Добавление нового материал</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{% url 'rosatom_app:add_useful' %}" method="post" role="form">
+                                {% csrf_token %}
+                                {% bootstrap_form form %}
+                                {% buttons submit='Добавить' %}{% endbuttons %}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock content %}

@@ -1,0 +1,56 @@
+{% load bootstrap4 %}
+
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Росатом</title>
+        
+    {% bootstrap_css %}
+    {% bootstrap_javascript jquery='full' %}
+</head>
+<body>
+    <nav class="sticky-top navbar navbar-expand-md navbar-light bg-light mb-4 border w-100"
+         style="min-width: auto;">
+        <a href="{% url 'rosatom_app:home' %}" class="navbar-brand">Росатом</a>
+        
+        <button class="navbar-toggler" type="button" data-toggle="collapse"
+                data-target="#navbarCollapse" aria-controls="navbarCollapse"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a href="{% url 'rosatom_app:home' %}" class="nav-link text-primary">Главная</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'rosatom_app:useful' %}" class="nav-link text-primary">Полезные материалы</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'rosatom_app:collective' %}" class="nav-link text-primary">Коллектив</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                {% if user.is_authenticated %}
+                <li class="nav-item mr-4">
+                    <span class="navbar-text">Здравствуйте, {{ name }}</span>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'rosatom_users:logout' %}" class="nav-link">Выйти</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a href="{% url 'rosatom_users:login' %}" class="nav-link">Войти</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    <main class="container">
+        {% block content %}
+        {% endblock content %}
+    </main>
+</body>
+</html>

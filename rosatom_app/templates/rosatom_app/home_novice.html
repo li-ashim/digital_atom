@@ -1,0 +1,64 @@
+{% extends "rosatom_app/base.html" %}
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <h3>Информация обо мне</h3>
+        <ul class="list group list-group-flush text-left">
+            <li class="list-group-item"><b>Отдел</b>: {{ department }}</li>
+            <li class="list-group-item"><b>Должность</b>: {{ position }}</li>
+            <li class="list-group-item"><b>Зарплата</b>: {{ salary }} &#8381;</li>
+        </ul>
+    </div>
+    <div class="col-md-6 mb-4">
+        <h3>Работа</h3>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><b>График</b>:
+                {% for entry in schedule %}
+                <br/><span>{{ entry }}</span>
+                {% endfor %}
+            </li>
+            <li class="list-group-item"><b>Рабочее место</b>: {{ workplace }}</li>
+        </ul>
+    </div>
+    <div class="col-sm-12 border">
+        <h3 class="mb-3">Текущие задачи <span class="badge badge-info">{{ number_of_tasks }}</span></h3>
+        <div class="row">
+            <div class="col-5 col-lg-8 font-weight-bold">Задание</div>
+            <div class="col-5 col-lg-4 font-weight-bold text-left">Дедлайн</div>
+        </div>
+            {% for task in tasks %}
+                <div class="row border-bottom p-2 mb-6">
+                    <div class="col-5 col-lg-8 text-left dropdown show">
+                        <a class="text-primary text-wrap dropdown-toggle" href="#" role="button"
+                                    id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="true">
+                            {{ task.task_name }}
+                        </a>
+                        
+                        <div class="dropdown-menu p-2" aria-labelledby="dropdownMenuLink">    
+                            {{ task.content }}
+                        </div>
+                    </div>
+                    <div class="col-5 col-lg-4 text-left">{{ task.deadline }}</div>
+                </div>
+            {% empty %}
+                <div class="col-12 text-center">
+                    <p>У вас нет активных заданий!</p>
+                </div>
+            {% endfor %}
+    </div>
+    <div class="col-4 mt-4">
+        <h3>Наставник</h3>
+        <div class="card mb-4" style="width: 18rem;">
+            {% load static %}
+            <img src="{% static 'images/user_placeholder.png' %}" class="img-fluid rounded" alt="Mentor's photo">
+            <div class="card-body">
+                <h5 class="card-title">{{ mentor.fullname }}</h6>
+                <h6 class="card-subtitle mb-2 text-muted">{{ mentor.department }}: {{ mentor.position}}</h5>
+                <a href="#" class="btn md text-center">{{ mentor.phone_number }}</a>
+                <a href="mailto:{{ mentor.email }}" class="bth md text-center">{{ mentor.email }}</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
